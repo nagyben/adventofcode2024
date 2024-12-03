@@ -24,11 +24,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "day-03"
+version = "0.1.0"
+dependencies = [
+ "nom",
+ "regex",
+ "rstest",
+]
+
+[[package]]
 name = "day01"
 version = "0.1.0"
 dependencies = [
  "nom",
- "rstest",
 ]
 
 [[package]]

@@ -1,0 +1,9 @@
+[package]
+name = "day-03"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nom = { workspace = true }
+regex = "1.11.1"
+rstest = { workspace = true }
