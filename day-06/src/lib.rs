@@ -2,7 +2,7 @@ use std::fmt::{self, Debug, Formatter};
 
 pub type Grid = Vec<Vec<char>>;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GuardDirection {
     Up,
     Down,
