@@ -1,15 +1,15 @@
 use nom::{
     bytes::complete::tag,
-    character::complete::{digit1, newline, space1},
+    character::complete::{digit1, newline},
     combinator::map_res,
-    multi::{many1, separated_list1},
+    multi::separated_list1,
     sequence::separated_pair,
     IResult,
 };
 
-type PageRule = (usize, usize);
+pub type PageRule = (usize, usize);
 type PageRules = Vec<PageRule>;
-type PrintSequence = Vec<usize>;
+pub type PrintSequence = Vec<usize>;
 
 trait Parse {
     fn parse(input: &str) -> IResult<&str, Self>
