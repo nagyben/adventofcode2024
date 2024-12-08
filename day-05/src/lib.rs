@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use nom::{
     bytes::complete::tag,
     character::complete::{digit1, newline},
@@ -8,7 +10,7 @@ use nom::{
 };
 
 pub type PageRule = (usize, usize);
-type PageRules = Vec<PageRule>;
+pub type PageRules = Vec<PageRule>;
 pub type PrintSequence = Vec<usize>;
 
 trait Parse {
@@ -48,4 +50,43 @@ pub fn parse_input(input: &str) -> (PageRules, Vec<PrintSequence>) {
     )(input)
     .unwrap()
     .1
+}
+
+pub fn page_rules_map(page_rules: &[(usize, usize)]) -> HashMap<usize, Vec<usize>> {
+    let mut map = HashMap::new();
+    page_rules.iter().for_each(|(a, b)| {
+        map.entry(*a)
+            .and_modify(|v: &mut Vec<usize>| v.push(*b))
+            .or_insert(vec![*b]);
+    });
+    map
+}
+
+pub fn is_correctly_ordered(
+    print_sequence: &PrintSequence,
+    page_rules_map: &HashMap<usize, Vec<usize>>,
+) -> bool {
+    print_sequence
+        .iter()
+        .enumerate()
+        .all(|(print_order, page)| {
+            // if a rule exists for the current page
+            if let Some(rule) = page_rules_map.get(page) {
+                // loop through all of the pages that must precede the current page
+                // check if it is in the current print sequence
+                rule.iter().all(|must_precede_page| {
+                    // if it is in the print sequence, check that it is after the current page
+                    if let Some(index) = print_sequence.iter().position(|p| p == must_precede_page)
+                    {
+                        index > print_order
+                    } else {
+                        // if it is not in the current print sequence, then no rules have been broken
+                        true
+                    }
+                })
+            } else {
+                // if no rules exist for the current page, then no rules have been broken
+                true
+            }
+        })
 }
