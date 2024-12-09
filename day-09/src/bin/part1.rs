@@ -1,4 +1,4 @@
-use day_09::{parse_input, Disk};
+use day_09::{checksum, parse_input, Disk};
 
 fn main() {
     println!("part1: {}", process(include_str!("../../input.txt")));
@@ -27,30 +27,10 @@ fn compress(disk: &mut Disk) {
     }
 }
 
-fn checksum(disk: &Disk) -> usize {
-    disk.iter().enumerate().fold(0, |acc, (i, block)| {
-        if let Some(id) = block {
-            acc + i * id
-        } else {
-            acc
-        }
-    })
-}
-
-fn print_disk(disk: &Disk) -> String {
-    disk.iter()
-        .map(|block| {
-            if let Some(id) = block {
-                format!("{}", id)
-            } else {
-                ".".to_string()
-            }
-        })
-        .collect()
-}
-
 #[cfg(test)]
 mod tests {
+    use day_09::print_disk;
+
     use super::*;
     #[test]
     fn example() {
