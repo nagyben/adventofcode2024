@@ -8,28 +8,30 @@ fn main() {
 
 fn process(input: &str) -> usize {
     let mut stones = parse_input(input);
-    blink(&mut stones);
-    0
+    for _ in 0..25 {
+        stones = blink(stones);
+    }
+    stones.len()
 }
 
-fn blink(stones: &mut LinkedList<usize>) {
-    let mut iter = stones.iter_mut().enumerate();
-    while let Some((i, value)) = iter.next() {
-        if *value == 0 {
-            *value = 1;
+fn blink(mut stones: LinkedList<usize>) -> LinkedList<usize> {
+    let mut new_stones = LinkedList::new();
+    while let Some(n) = stones.pop_front() {
+        if n == 0 {
+            new_stones.push_back(1);
             continue;
         }
-        let num_digits = value.ilog10() + 1;
+        let num_digits = n.ilog10() + 1;
         if num_digits % 2 == 0 {
-            let left = *value / 10usize.pow(num_digits / 2);
-            let right = *value % 10usize.pow(num_digits / 2);
-            let mut tail = stones.split_off(i + 1);
-            stones.push_back(left);
-            stones.push_back(right);
-            stones.append(&mut tail);
+            let left = n / 10usize.pow(num_digits / 2);
+            let right = n % 10usize.pow(num_digits / 2);
+            new_stones.push_back(left);
+            new_stones.push_back(right);
+        } else {
+            new_stones.push_back(n * 2024);
         }
     }
-    todo!()
+    new_stones
 }
 
 #[cfg(test)]
