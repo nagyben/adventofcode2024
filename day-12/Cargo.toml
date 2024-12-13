@@ -1,0 +1,9 @@
+[package]
+name = "day-12"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nom = { workspace = true }
+petgraph = "0.6.5"
+rstest = { workspace = true }
