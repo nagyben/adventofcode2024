@@ -1,4 +1,4 @@
-use day_14::{parse_input, Robot, Robots};
+use day_14::{calculate_safety_factor, parse_input, Robot, Robots};
 
 fn main() {
     println!(
@@ -13,28 +13,6 @@ fn process(input: &str, max_x: i32, max_y: i32) -> usize {
         robots.iter_mut().for_each(|robot| robot.tick(max_x, max_y));
     }
     calculate_safety_factor(&robots, max_x, max_y)
-}
-
-fn calculate_safety_factor(robots: &[Robot], max_x: i32, max_y: i32) -> usize {
-    let mut quadrants = [0; 4];
-    robots.iter().for_each(|robot| {
-        if robot.position.x < max_x / 2 && robot.position.y < max_y / 2 {
-            quadrants[0] += 1;
-        }
-        if robot.position.x > max_x / 2 && robot.position.y < max_y / 2 {
-            quadrants[1] += 1;
-        }
-
-        if robot.position.x > max_x / 2 && robot.position.y > max_y / 2 {
-            quadrants[2] += 1;
-        }
-        if robot.position.x < max_x / 2 && robot.position.y > max_y / 2 {
-            quadrants[3] += 1;
-        }
-    });
-    quadrants
-        .iter()
-        .fold(1, |acc, num_robots| acc * *num_robots)
 }
 
 fn print_robots(robots: &Vec<Robot>, max_x: i32, max_y: i32) {
