@@ -1,33 +1,76 @@
+use color_eyre::eyre::eyre;
 use nom::{
-    character::complete::{digit1, newline, space1}, combinator::map_res, multi::separated_list1, sequence::separated_pair, Err, IResult
+    character::complete::{anychar, multispace0, newline},
+    combinator::map_res,
+    error::Error,
+    multi::{many1, separated_list1},
+    IResult,
 };
 
-type Grid = Vec<Vec<Obstacle>>;
+pub type Grid = Vec<Vec<ObstacleType>>;
 
-struct Obstacle {
-    position: glam::IVec2,
-    obstacle_type: ObstacleType,
+#[derive(Debug, Copy, Clone)]
+pub enum ObstacleType {
+    Wall,
+    Box,
+    Empty,
+    Robot,
 }
 
-impl Obstacle {
-    pub fn try_move(&self, &mut grid: Grid) -> Result<()>> {
-        todo!()
+impl std::fmt::Display for ObstacleType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ObstacleType::Wall => write!(f, "#"),
+            ObstacleType::Box => write!(f, "O"),
+            _ => write!(f, "."),
+        }
     }
 }
 
-enum ObstacleType {
-    Wall,
-    Box,
+pub fn parse_grid(input: &str) -> IResult<&str, Grid> {
+    separated_list1(
+        newline,
+        many1(map_res(anychar, |c| match c {
+            '.' => Ok(ObstacleType::Empty),
+            'O' => Ok(ObstacleType::Box),
+            '#' => Ok(ObstacleType::Wall),
+            '@' => Ok(ObstacleType::Robot),
+            _ => Err(eyre!("Invalid character in input: {}", c)),
+        })),
+    )(input)
 }
 
-pub fn parse_input(input: &str) -> (Vec<usize>, Vec<usize>) {
-    let v: IResult<&str, Vec<(usize, usize)>> = separated_list1(
-        newline,
-        separated_pair(
-            map_res(digit1, |d: &str| d.parse::<usize>()),
-            space1,
-            map_res(digit1, |d: &str| d.parse::<usize>()),
+pub fn parse_instructions(input: &str) -> IResult<&str, Vec<glam::IVec2>> {
+    map_res(
+        separated_list1(
+            newline,
+            many1(map_res(anychar, |c: char| match c {
+                '^' => Ok(glam::IVec2 { x: 0, y: -1 }),
+                '>' => Ok(glam::IVec2 { x: 1, y: 0 }),
+                'v' => Ok(glam::IVec2 { x: 0, y: 1 }),
+                '<' => Ok(glam::IVec2 { x: -1, y: 0 }),
+                _ => Err(eyre!("Invalid character in input: {}", c)),
+            })),
         ),
-    )(input);
-    v.unwrap().1.iter().cloned().unzip()
+        |list| Ok::<std::vec::Vec<glam::IVec2>, Error<&str>>(list.into_iter().flatten().collect()),
+    )(input)
+}
+
+pub fn parse_input(input: &str) -> (Grid, Vec<glam::IVec2>, glam::IVec2) {
+    let (input, mut grid) = parse_grid(input).unwrap();
+    let (input, _) = multispace0::<&str, Error<&str>>(input).unwrap();
+    let (_, instructions) = parse_instructions(input).unwrap();
+    let start_position = grid
+        .iter()
+        .enumerate()
+        .find_map(|(y, row)| {
+            row.iter()
+                .position(|c| matches!(c, ObstacleType::Robot))
+                .map(|x| glam::IVec2 {
+                    x: x as i32,
+                    y: y as i32,
+                })
+        })
+        .unwrap();
+    (grid, instructions, start_position)
 }

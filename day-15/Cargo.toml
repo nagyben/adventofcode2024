@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+color-eyre = { workspace = true }
 glam = "0.29.2"
 nom = { workspace = true }
 rstest = { workspace = true }
