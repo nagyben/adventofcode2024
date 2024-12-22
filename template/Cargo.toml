@@ -6,3 +6,9 @@ edition = "2021"
 [dependencies]
 nom = { workspace = true }
 rstest = { workspace = true }
+divan = { workspace = true }
+
+[[bench]]
+name = "{{project-name}}-bench"
+path = "benches/benchmarks.rs"
+harness = false

@@ -1,3 +1,6 @@
+pub mod part1;
+pub mod part2;
+
 use nom::{
     character::complete::{digit1, newline, space1},
     combinator::map_res,
