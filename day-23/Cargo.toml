@@ -1,0 +1,16 @@
+[package]
+name = "day-23"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nom = { workspace = true }
+rstest = { workspace = true }
+divan = { workspace = true }
+petgraph = { workspace = true }
+itertools = { workspace = true }
+
+[[bench]]
+name = "day-23-bench"
+path = "benches/benchmarks.rs"
+harness = false
